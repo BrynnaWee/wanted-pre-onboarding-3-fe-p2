@@ -22,18 +22,21 @@ export interface LoginRequest {
  * */
 
 export const loginWithToken = async (args: LoginRequest): Promise<LoginResultWithToken> => {
+
   // TODO(2-1): 로그인 API 호출 및 토큰 반환하기
   // POST, `${ BASE_URL }/auth/login`을 호출하세요.
   // API Spec은 강의 자료를 참고하세요.
   // access_token 발급에 성공한 경우에는 { result: 'success', access_token: string } 형태의 값을 반환하세요.
 
-  const loginRes = await fetch('http://wanted-p2.bluestragglr.com/auth/login',{
+  const loginRes = await fetch(`${BASE_URL}/auth/login`,{
       method : "POST",
       headers:{
         'Content-Type':'application/json'
       },
       body : JSON.stringify(args)
       });
+
+      console.log('loginRes',loginRes);
 
       if(loginRes.ok){
         const data = await loginRes.json();
@@ -55,9 +58,9 @@ export const getCurrentUserInfoWithToken = async (token: string): Promise<UserIn
   // API Spec은 강의 자료를 참고하세요.
   // 유저 정보 조회에 성공한 경우에는 UserInfo 타입의 값을 반환하세요.
 
-  // UserInfo는 name임
+  console.log('token',token);
 
-  const getInfo = await fetch('http://wanted-p2.bluestragglr.com/profile',{
+  const getInfo = await fetch(`${BASE_URL}/profile`,{
       method : "GET",
       headers:{
         'Content-Type':'application/json',
@@ -66,8 +69,12 @@ export const getCurrentUserInfoWithToken = async (token: string): Promise<UserIn
       body: null
     });
 
+    console.log('getInfo',getInfo);
+
     const infoObj = await getInfo.json();
-    return infoObj.userInfo.name;
+
+    console.log('infoObj',infoObj);
+    return infoObj.userInfo;
 }
 
 
