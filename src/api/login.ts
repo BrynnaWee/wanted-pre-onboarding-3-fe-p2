@@ -88,6 +88,19 @@ export const login = async (args: LoginRequest): Promise<LoginResult> => {
   // API Spec은 강의 자료를 참고하세요.
   // access_token 발급에 성공한 경우에는 saveAccessTokenToLocalStorage 함수를 호출하여 access_token을 localStorage에 저장하고 'success'를 반환하세요.
 
+  const tokenData = await fetch(`${BASE_URL}/auth/login`,{
+    method: 'POST',
+    headers:{
+      'Content-Type':'application/json'
+    },
+    body: JSON.stringify(args)
+  });
+
+  if(tokenData.ok) {
+    const result = await tokenData.json().then((res)=> localStorage.setItem('access_token',res.access_token));
+    return 'success'
+  }
+
   return 'fail'
 }
 
@@ -97,6 +110,28 @@ export const getCurrentUserInfo = async (): Promise<UserInfo | null> => {
   // 로컬 스토리지에 있는 token을 getAccessTokenFromLocalStorage로 가져와서 Authorization header에 Bearer token으로 넣어주세요.
   // API Spec은 강의 자료를 참고하세요.
   // 유저 정보 조회에 성공한 경우에는 UserInfo 타입의 값을 반환하세요.
+
+  const myToken = localStorage.getItem('access_token');
+
+  const userInfo = await fetch(`${ BASE_URL }/profile`,{
+    method: 'GET',
+    headers:{
+      'Content-Type':'application/json',
+      'Authorization': `Bearer ${myToken}`
+    },
+    body: null,
+  });
+
+  console.log('userInfo',userInfo);
+
+  if(userInfo.ok){
+    const getData = await userInfo.json().then((infoRes)=>{
+      console.log(infoRes);
+      return infoRes.userInfo;
+    });
+
+    return getData;
+  }
 
   return null
 }
